@@ -3,19 +3,20 @@ services:
   - docker
 
 env:
-  - NPM_TARGET=test
-  - NPM_TARGET=lint
-  - NPM_TARGET=coverage
+  - NODE_VERSION=8-jessie
+#  - NODE_VERSION=10-jessie
 
-before_install:
-  - docker pull node:8-onbuild
-
-install:
-  - docker build -t probot-hello .
 
 script:
-  - docker run -it --rm probot-hello npm run $NPM_TARGET
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker build -t node:$NODE_VERSION --build-arg NODE_IMAGE="node:${NODE_VERSION}" .
+  - docker images
+  - docker tag node:$NODE_VERSION $DOCKER_USERNAME/probot-hello:$NODE_VERSION-(git rev-parse HEAD)
+  - docker push $NODE_VERSION $DOCKER_USERNAME/probot-hello:$NODE_VERSION-(git rev-parse HEAD)
 
+stages:
+  - test
+  - npm-targets 
 after_sucess:
   - set -x -v;
     set -e;

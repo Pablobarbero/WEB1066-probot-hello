@@ -18,11 +18,11 @@ script:
 
 after_sucess:
   - set -x -v;
-  - set -e;
-  if [ "${NPM_TARGET}" = "test" ]; then
-    docker tag probot-hello probot-hello:$(git rev-parse HEAD)
-  else
-    echo "skipping tag and go away";
-  fi
-  docker images;
-  - set +x +v;
+    set -e;
+    if [ "${NPM_TARGET}" = "test" ]; then
+      docker tag probot-hello probot-hello:$(git rev-parse HEAD)
+    else
+      echo "skipping tag and go away";
+    fi
+    docker images;
+    set +x +v;
